@@ -5,9 +5,7 @@
 
 server <- function(input, output) {
   
-  observeEvent(input$line_click, {
-    #cat("Showing", input$line_click$x, "rows\n")
-  })
+  observeEvent(input$line_click, {})
   
   x_loc <- eventReactive(input$line_click, {
     input$line_click$x
@@ -19,10 +17,16 @@ server <- function(input, output) {
     input$foodgroupID
   })
   
+  observeEvent(input$geoInput, {})
+  
+  geo <- eventReactive(input$geoInput, {
+    input$geoInput
+  })
+  
   line_data <- reactive({
     
     line_data <- data %>% 
-      filter(Ref_Date >= min(input$yearInput)) %>% 
+      filter(Ref_Date >= min(input$yearInput)) %>%
       filter(Ref_Date <= max(input$yearInput)) %>%
       filter(SUMMARY %in% input$foodgroupID) %>% 
       filter(GEO %in% input$geoInput)
@@ -39,14 +43,9 @@ server <- function(input, output) {
       summary_filter <- food_groups
     }
     
-    if (is.null(x_loc())) {
-      bar_data <- NULL
-    } else {
-      bar_data <- data %>% 
-        filter(Ref_Date - x_loc() < 0.1) %>% 
-        filter(SUMMARY %in% summary_filter) %>% 
-        filter(GEO %in% geographies)
-    }
+    bar_data <- data %>% 
+      filter(SUMMARY %in% summary_filter) %>% 
+      filter(GEO %in% geo())
     
     return(bar_data)
     
@@ -56,12 +55,13 @@ server <- function(input, output) {
     
     line_data() %>%
       ggplot(aes(x = Ref_Date, y = Value, 
-                 colour = GEO)) +
+                 colour = fct_relevel(GEO, c("Canada", geographies)))) +
       geom_line() +
       geom_point() +
-      scale_colour_brewer("Geography", palette = "Dark2") +
-      scale_x_continuous("Year") +
-      scale_y_continuous("Dollars")
+      scale_colour_manual("Geography", values = cbbPalette) +
+      scale_x_continuous("Year", breaks = 2010:2016) +
+      scale_y_continuous("Dollars", labels = dollar_format()) +
+      theme_bw()
     
   })
   
@@ -69,28 +69,34 @@ server <- function(input, output) {
     
     if (!is.null(input$line_click)) {
       loc <- input$line_click
-      paste0(loc$x, " ", round(loc$y, 2))
+      fill <- round(loc$x, 0)
     } else {
-      paste0("NULL")
+      fill <- ""
     }
-    
+    paste0("Click line plot for detailed expenditure\n breakdown of year: ", fill)
   })
   
   output$barPlot <- renderPlot({
+    
+    #input$action
+    
+    click <- x_loc()
     
     if(is.null(bar_data())) {
       #print("Click somewhere")
     } else {
       
       bar_data() %>%
-        ggplot(aes(x = SUMMARY, y = Value)) +
-        geom_bar(aes(fill = GEO), position="dodge", stat="identity") +
-        scale_fill_brewer("Geography", palette = "Dark2") +
+        filter(Ref_Date - click < 0.1) %>%
+        ggplot(aes(x = SUMMARY, y = Value, 
+                   fill = fct_relevel(GEO, c("Canada", geographies)))) +
+        geom_bar(position="dodge", stat="identity") +
+        scale_fill_manual("Geography", values = cbbPalette) +
         scale_x_discrete("Group") +
-        scale_y_continuous("Dollars") +
+        scale_y_continuous("Dollars", labels = dollar_format()) +
+        ggtitle(paste0("Detailed expenditure breakdown for ", round(click, 0))) + 
         theme_bw() +
         theme(axis.text.x = element_text(angle = 35, hjust = 1, size=10))
-      
     }
     
   })

@@ -9,6 +9,8 @@ library(shiny)
 library(readr) 
 library(dplyr)
 library(ggplot2)
+library(forcats)
+library(scales)
 
 data <- read_csv("../data/cansim-food-exp.csv",
                  col_types = cols(Ref_Date = col_integer(),
@@ -49,9 +51,12 @@ times <- c("Restaurant dinners",
            "Restaurant lunches", 
            "Restaurant breakfasts")
 
-food_tree <- list(
-  
-  food = food_groups,
-  rest = times
-  
-)
+
+## colourblind friendly palette from:
+## http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
+
+cbbPalette <- c("Canada" = "#000000", "British Columbia" = "#E69F00", 
+                "Prairie Region" = "#56B4E9", "Ontario" = "#009E73", 
+                "Quebec" = "#CC79A7", "Atlantic Region" = "#0072B2")
+
+
