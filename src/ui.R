@@ -14,12 +14,12 @@ ui <- fluidPage(
                 value = c(2010, 2016), sep=""), 
     
     checkboxGroupInput("geoInput", "Geography",
-                       choices = geographies,
-                       selected = geographies),
+                       choices = c("Canada", geographies),
+                       selected = "Canada"),
     
     checkboxGroupInput("foodgroupID", "Food Group", 
-                       choices = food_groups,
-                       selected = food_groups),
+                       choices = store_rest,
+                       selected = store_rest),
     
     uiOutput("moreControls")
     
@@ -27,10 +27,16 @@ ui <- fluidPage(
   
   mainPanel(
     
-    plotOutput("barPlot", width = "100%",
-               hover = hoverOpts(id = "bar_hover", delay = 0)), 
+    plotOutput("linePlot", width = "100%",
+               click = "line_click"),
     
-    plotOutput("linePlot")
+    verbatimTextOutput("info"),
+    
+    plotOutput("barPlot", width = "100%")
+    
+    
+    
+    
     
   )
   

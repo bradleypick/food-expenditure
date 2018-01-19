@@ -8,6 +8,7 @@
 library(shiny)
 library(readr) 
 library(dplyr)
+library(ggplot2)
 
 data <- read_csv("../data/cansim-food-exp.csv",
                  col_types = cols(Ref_Date = col_integer(),

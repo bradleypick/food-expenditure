@@ -5,40 +5,71 @@
 
 server <- function(input, output) {
   
-  filtered_data <- reactive({
+  line_data <- reactive({
     
     data %>% 
       filter(Ref_Date >= min(input$yearInput)) %>% 
       filter(Ref_Date <= max(input$yearInput)) %>%
-      filter(GEO %in% input$geoInput) %>% 
-      filter(SUMMARY %in% input$foodgroupID)  
+      filter(SUMMARY %in% input$foodgroupID) %>% 
+      filter(GEO %in% input$geoInput)
+        
       
     
   })
   
-  output$barPlot <- renderPlot({
+  bar_data <- reactive({
     
-    filtered_data() %>% 
-      ggplot(aes(x = SUMMARY, y = Value)) + 
-      geom_bar(aes(fill = as.factor(GEO)), position="dodge", stat="identity") + 
-      scale_fill_brewer("Geography", palette = "Dark2") +
-      scale_x_discrete("Group") + 
-      scale_y_continuous("Dollars", limits=c(0, 1500)) +
-      theme(axis.text.x = element_text(angle = 35, hjust = 1, size=10))
+    data %>% 
+      filter(Ref_Date >= min(input$yearInput)) %>% 
+      filter(Ref_Date <= max(input$yearInput)) %>%
+      filter(SUMMARY %in% food_groups) %>% 
+      filter(GEO %in% geographies)
     
-  },
-  width = 800,
-  height = 600)
+  })
   
-  # output$linePlot <- renderPlot({
-  #   data %>% 
-  #     filter(GEO %in% c("British Columbia")) %>% 
-  #     filter(SUMMARY %in% food_groups) %>% 
-  #     mutate(Value = as.numeric(Value)) %>% 
-  #     ggplot(aes(x = Ref_Date, y = Value, group = SUMMARY)) + 
-  #     geom_line(aes(colour = SUMMARY)) + 
-  #     scale_x_continuous("Date") + 
-  #     scale_y_continuous("Dollars", limits=c(0, 1500)) 
-  # })
+  output$barPlot <- renderPlot({
+
+    bar_data() %>%
+      filter(Ref_Date - x_loc() < 10) %>% 
+      ggplot(aes(x = SUMMARY, y = Value)) +
+      geom_bar(aes(fill = GEO), position="dodge", stat="identity") +
+      scale_fill_brewer("Geography", palette = "Dark2") +
+      scale_x_discrete("Group") +
+      scale_y_continuous("Dollars") +
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 35, hjust = 1, size=10))
+
+
+  })
+  
+  output$info <- renderText({
+    
+    if (!is.null(input$line_click)) {
+      loc <- input$line_click
+      paste0(loc$x, " ", round(loc$y, 2))
+    } else {
+      paste0("NULL")
+    }
+    
+  })
+  
+  observeEvent(input$line_click, {
+    cat("Showing", input$line_click$x, "rows\n")
+  })
+  
+  x_loc <- eventReactive(input$line_click, {
+    input$line_click$x
+  })
+  
+  output$linePlot <- renderPlot({
+    
+    line_data() %>%
+      ggplot(aes(x = Ref_Date, y = Value, 
+                 colour = GEO, linetype = SUMMARY)) +
+      geom_line() +
+      scale_x_continuous("Year") +
+      scale_y_continuous("Dollars")
+    
+  })
   
 }
