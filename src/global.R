@@ -44,3 +44,14 @@ prairie_region <- c("Manitoba",
 
 store_rest <- c("Food purchased from stores", 
                 "Food purchased from restaurants")
+
+times <- c("Restaurant dinners", 
+           "Restaurant lunches", 
+           "Restaurant breakfasts")
+
+food_tree <- list(
+  
+  food = food_groups,
+  rest = times
+  
+)

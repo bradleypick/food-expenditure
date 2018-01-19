@@ -17,9 +17,9 @@ ui <- fluidPage(
                        choices = c("Canada", geographies),
                        selected = "Canada"),
     
-    checkboxGroupInput("foodgroupID", "Food Group", 
+    radioButtons("foodgroupID", "Food Group", 
                        choices = store_rest,
-                       selected = store_rest),
+                       selected = store_rest[1]),
     
     uiOutput("moreControls")
     
