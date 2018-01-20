@@ -1,0 +1,12 @@
+name: CanadianFoodExpenditure
+title: CanadianFoodExpenditure
+username:
+account: bradleypick
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 258759
+bundleId: 1184662
+url: https://bradleypick.shinyapps.io/CanadianFoodExpenditure/
+when: 1516474925.26225
+asMultiple: FALSE
+asStatic: FALSE
