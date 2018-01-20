@@ -5,10 +5,16 @@
 
 server <- function(input, output) {
   
-  observeEvent(input$line_click, {})
+  ########################
+  ## Reactive Variables ##
+  ########################
   
-  x_loc <- eventReactive(input$line_click, {
-    input$line_click$x
+  ## Inputs -- monitor inputs for update of data
+  
+  observeEvent(input$bar_year, {})
+  
+ bar_year <- eventReactive(input$bar_year, {
+    input$bar_year
   })
   
   observeEvent(input$foodgroupID, {})
@@ -23,11 +29,11 @@ server <- function(input, output) {
     input$geoInput
   })
   
+  ## Data -- update data based on changing inputs
+  
   line_data <- reactive({
     
     line_data <- data %>% 
-      filter(Ref_Date >= min(input$yearInput)) %>%
-      filter(Ref_Date <= max(input$yearInput)) %>%
       filter(SUMMARY %in% input$foodgroupID) %>% 
       filter(GEO %in% input$geoInput)
         
@@ -39,65 +45,84 @@ server <- function(input, output) {
     
     if (group() == "Food purchased from restaurants") {
       summary_filter <- times
+      bar_data <- data %>% 
+        filter(SUMMARY %in% summary_filter) %>% 
+        filter(GEO %in% geo()) %>% 
+        mutate(SUMMARY = fct_recode(SUMMARY,
+                                    Breakfast = "Restaurant breakfasts",
+                                    Lunch = "Restaurant lunches",
+                                    Dinner = "Restaurant dinners")) %>% 
+        mutate(SUMMARY = fct_relevel(SUMMARY, c("Breakfast", "Lunch", "Dinner")))
     } else {
       summary_filter <- food_groups
+      bar_data <- data %>% 
+        filter(SUMMARY %in% summary_filter) %>% 
+        filter(GEO %in% geo()) %>% 
+        mutate(SUMMARY = fct_recode(SUMMARY,
+                                    Bakery = "Bakery products",
+                                    Grains = "Cereal grains and cereal products",
+                                    Fruit = "Fruit, fruit preparations and nuts",
+                                    Vegetables = "Vegetables and vegetable preparations",
+                                    Dairy ="Dairy products and eggs",
+                                    Meat = "Meat",
+                                    Seafood = "Fish and seafood",
+                                    Other = "Non-alcoholic beverages and other food products"))
     }
     
-    bar_data <- data %>% 
-      filter(SUMMARY %in% summary_filter) %>% 
-      filter(GEO %in% geo())
+    
     
     return(bar_data)
     
   })
   
-  output$linePlot <- renderPlot({
+  #####################
+  ####### Plots #######
+  #####################
+  
+  output$linePlot <- renderPlotly({
     
-    line_data() %>%
-      ggplot(aes(x = Ref_Date, y = Value, 
-                 colour = fct_relevel(GEO, c("Canada", geographies)))) +
+    if (group() == "Food purchased from stores") {
+      pur_from <- "Stores"
+    } else {
+      pur_from <- "Restaurants"
+    }
+    
+    l <- line_data() %>%
+      mutate(GEO = fct_relevel(GEO, c("Canada", geographies))) %>% 
+      ggplot(aes(x = Ref_Date, y = Value, colour = GEO)) +
       geom_line() +
-      geom_point() +
-      scale_colour_manual("Geography", values = cbbPalette) +
-      scale_x_continuous("Year", breaks = 2010:2016) +
+      geom_point(aes(text=sprintf("Av. Expenditure: $%s<br>Date: %s<br>Location: %s",
+                                  Value, Ref_Date, GEO))) +
+      scale_colour_manual("Location", values = cbbPalette) +
+      scale_x_continuous("Year", 
+                         breaks = min(data$Ref_Date):max(data$Ref_Date)) +
       scale_y_continuous("Dollars", labels = dollar_format()) +
+      ggtitle(paste0("Average Annual Household Expenditure at ", pur_from)) +
       theme_bw()
     
+    ggplotly(l, tooltip = "text")
   })
   
-  output$info <- renderText({
-    
-    if (!is.null(input$line_click)) {
-      loc <- input$line_click
-      fill <- round(loc$x, 0)
-    } else {
-      fill <- ""
-    }
-    paste0("Click line plot for detailed expenditure\n breakdown of year: ", fill)
-  })
   
-  output$barPlot <- renderPlot({
+  output$barPlot <- renderPlotly({
     
-    #input$action
+    year <- as.numeric(bar_year())
     
-    click <- x_loc()
+    b <- bar_data() %>%
+      mutate(GEO = fct_relevel(GEO, c("Canada", geographies))) %>% 
+      filter(Ref_Date == year) %>%
+      ggplot(aes(x = SUMMARY, y = Value, fill = GEO)) +
+      geom_bar(aes(text=sprintf("Group: %s<br>Av. Expenditure: $%s<br>Location: %s", 
+                                SUMMARY, Value, GEO)),
+               position="dodge", stat="identity") +
+      scale_fill_manual("Location", values = cbbPalette) +
+      scale_x_discrete("Group") +
+      scale_y_continuous("Dollars", labels = dollar_format()) +
+      ggtitle(paste0("Subgroup Expenditure Breakdown for ", year)) + 
+      theme_bw() #+
+      #theme(axis.text.x = element_text(angle = -15, hjust = 1, size=10))
     
-    if(is.null(bar_data())) {
-      #print("Click somewhere")
-    } else {
-      
-      bar_data() %>%
-        filter(Ref_Date - click < 0.1) %>%
-        ggplot(aes(x = SUMMARY, y = Value, 
-                   fill = fct_relevel(GEO, c("Canada", geographies)))) +
-        geom_bar(position="dodge", stat="identity") +
-        scale_fill_manual("Geography", values = cbbPalette) +
-        scale_x_discrete("Group") +
-        scale_y_continuous("Dollars", labels = dollar_format()) +
-        ggtitle(paste0("Detailed expenditure breakdown for ", round(click, 0))) + 
-        theme_bw() +
-        theme(axis.text.x = element_text(angle = 35, hjust = 1, size=10))
-    }
+    ggplotly(b, tooltip = "text")
     
   })
   

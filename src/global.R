@@ -11,6 +11,7 @@ library(dplyr)
 library(ggplot2)
 library(forcats)
 library(scales)
+library(plotly)
 
 data <- read_csv("../data/cansim-food-exp.csv",
                  col_types = cols(Ref_Date = col_integer(),

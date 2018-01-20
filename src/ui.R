@@ -6,26 +6,26 @@
 ui <- fluidPage(
   
   ## title
-  titlePanel("Statistics Canada Household Food Expenditure data"),
+  titlePanel("Statistics Canada Annual Food Expenditure Data Explorer"),
   
+  ## sidebar layput
   sidebarPanel(
-    
-    sliderInput("yearInput", "Year", min = 2010, max = 2016,
-                value = c(2010, 2016), sep=""),
-    
-    #actionButton("action", label = "Details for selected year:"),
-    
-    
-    checkboxGroupInput("geoInput", "Geography",
+
+    ## location input
+    checkboxGroupInput("geoInput", "Location",
                        choices = c("Canada", geographies),
                        selected = c("Canada", "British Columbia", "Ontario")),
     
+    ## food group input
     radioButtons("foodgroupID", "Food purchased from:", 
                        choices = list("Stores" = store_rest[1],
                                       "Restaurants" = store_rest[2]),
                        selected = store_rest[1]),
     
-    verbatimTextOutput("info"),
+    ## year input
+    selectInput("bar_year", label = "Year of Subgroup Breakdown", 
+                choices = min(data$Ref_Date):max(data$Ref_Date), 
+                selected = 2016),
     
     uiOutput("moreControls"), 
     
@@ -35,16 +35,11 @@ ui <- fluidPage(
   
   mainPanel(
     
+    ## plots
+    plotlyOutput("linePlot", width = "100%", height = 300),
+               #click = "line_click"),#clickOpts("line_click", clip= TRUE)),
     
-    
-    plotOutput("linePlot", width = "100%", height = 300,
-               click = clickOpts("line_click", clip= TRUE)),
-    
-    plotOutput("barPlot", width = "100%")
-    
-    
-    
-    
+    plotlyOutput("barPlot", width = "100%", height = 300)
     
   )
   
