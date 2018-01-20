@@ -66,7 +66,7 @@ server <- function(input, output) {
                                     Dairy ="Dairy products and eggs",
                                     Meat = "Meat",
                                     Seafood = "Fish and seafood",
-                                    Other = "Non-alcoholic beverages and other food products"))
+                                    Other = "Non-alcoholic beverages and other food products")) 
     }
     
     
@@ -111,7 +111,7 @@ server <- function(input, output) {
     b <- bar_data() %>%
       mutate(GEO = fct_relevel(GEO, c("Canada", geographies))) %>% 
       filter(Ref_Date == year) %>%
-      ggplot(aes(x = SUMMARY, y = Value, fill = GEO)) +
+      ggplot(aes(x = fct_reorder(SUMMARY, Value), y = Value, fill = GEO)) +
       geom_bar(aes(text=sprintf("Group: %s<br>Av. Expenditure: $%s<br>Location: %s", 
                                 SUMMARY, Value, GEO)),
                position="dodge", stat="identity") +

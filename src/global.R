@@ -13,7 +13,7 @@ library(forcats)
 library(scales)
 library(plotly)
 
-data <- read_csv("../data/cansim-food-exp.csv",
+data <- read_csv("./cansim-food-exp.csv",
                  col_types = cols(Ref_Date = col_integer(),
                                   GEO = col_character(),
                                   STAT = col_character(),
