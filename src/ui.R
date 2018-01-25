@@ -6,15 +6,34 @@
 ui <- fluidPage(
   
   ## title
-  titlePanel("Statistics Canada Annual Food Expenditure Data Explorer"),
+  titlePanel("Canadian Food Expenditure Data Explorer"),
   
   ## sidebar layput
   sidebarPanel(
+    
+    selectInput("food", "Food Categories",
+                choices = c("Food expenditures", food_groups),
+                selected = "Food expenditures",
+                selectize=FALSE,
+                size=10),
+    
+    checkboxInput("subGroups", 
+                  label=c("Show Location Options"),
+                  value=FALSE),
 
-    ## location input
-    checkboxGroupInput("geoInput", "Location",
-                       choices = c("Canada", geographies),
-                       selected = c("Canada", "British Columbia", "Ontario")),
+    
+    
+    #actionButton("randfood", label = "Random Food"),
+    
+    
+
+    conditionalPanel(
+      condition = "input.subGroups",
+      ## location input
+      checkboxGroupInput("geoInput", "Location",
+                         choices = c("Canada", provinces),
+                         selected = c("Canada", provinces))
+                     ),
     
     ## food group input
     radioButtons("foodgroupID", "Food purchased from:", 
@@ -29,18 +48,19 @@ ui <- fluidPage(
     
     uiOutput("moreControls"), 
     
-    height ="100%"
+    height =300, width=3
     
     ),
   
   mainPanel(
+    plotlyOutput("linePlot", width = 800),
+    plotlyOutput("barPlot", width = 800)
+  
+    # tabsetPanel(
+    #   tabPanel("Compare over time", plotlyOutput("linePlot", width = 800)),
+    #   tabPanel("Compare across food groups", plotlyOutput("barPlot"))
+    )
     
-    ## plots
-    plotlyOutput("linePlot", width = "100%", height = 300),
-               #click = "line_click"),#clickOpts("line_click", clip= TRUE)),
-    
-    plotlyOutput("barPlot", width = "100%", height = 300)
-    
-  )
+  
   
 )

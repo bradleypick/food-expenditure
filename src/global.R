@@ -45,6 +45,17 @@ prairie_region <- c("Manitoba",
                     "Saskatchewan", 
                     "Alberta")
 
+provinces <- c("British Columbia",
+               "Alberta",
+               "Saskatchewan",
+               "Manitoba", 
+               "Ontario",
+               "Quebec",
+               "New Brunswick",
+               "Prince Edward Island",
+               "Nova Scotia",
+               "Newfoundland and Labrador")
+
 store_rest <- c("Food purchased from stores", 
                 "Food purchased from restaurants")
 
@@ -59,5 +70,12 @@ times <- c("Restaurant dinners",
 cbbPalette <- c("Canada" = "#000000", "British Columbia" = "#E69F00", 
                 "Prairie Region" = "#56B4E9", "Ontario" = "#009E73", 
                 "Quebec" = "#CC79A7", "Atlantic Region" = "#0072B2")
+all_col <- c("Canada" = "#000000", "British Columbia" = "#E69F00", 
+            "Alberta" = "#56B4E9", "Saskatchewan" = "#009E73", 
+            "Manitoba" = "#CC79A7", "Ontario" = "#0072B2",
+            "Quebec" = "#D55E00", "New Brunswick" = "#CC79A7",
+            "Prince Edward Island" = "#E6CB00",
+            "Nova Scotia" = "#9999CC",
+            "Newfoundland and Labrador" = "#66CC99")
 
 
