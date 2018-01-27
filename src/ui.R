@@ -6,43 +6,26 @@
 ui <- fluidPage(theme = shinytheme("flatly"),
   
   ## title
-  titlePanel("Canadian Food Expenditure Data Explorer"),
+  titlePanel("What do Canadians Eat?"),
   
-  ## sidebar layput
+  ## sidebar layout
   sidebarPanel(
     
+    ## food group selector
     selectInput("food", "Food Categories",
                 choices = c("All food expenditures", food_groups),
                 selected = "All food expenditures",
                 selectize=FALSE,
                 size=9),
     
-    # checkboxInput("subGroups", 
-    #               label=c("Show Location Options"),
-    #               value=FALSE),
+    ## geography selector
+    checkboxGroupInput("geoInput", "Location",
+                        choices = c("Canada", provinces),
+                        selected = c("Canada", "British Columbia", 
+                                     "Ontario", "Nova Scotia")),
 
     
-    
-    #actionButton("randfood", label = "Random Food"),
-    
-    
-
-    # conditionalPanel(
-    #   condition = "input.subGroups",
-      ## location input
-      checkboxGroupInput("geoInput", "Location",
-                         choices = c("Canada", provinces),
-                         selected = c("Canada", "British Columbia", 
-                                      "Ontario", "Nova Scotia")),
-    #                 ),
-    
-    ## food group input
-    # radioButtons("foodgroupID", "Food purchased from:", 
-    #                    choices = list("Stores" = store_rest[1],
-    #                                   "Restaurants" = store_rest[2]),
-    #                    selected = store_rest[1]),
-    
-    ## year input
+    ## year of subgroup breakdown selector
     selectInput("bar_year", label = "Year of Subgroup Breakdown", 
                 choices = min(data$Ref_Date):max(data$Ref_Date), 
                 selected = 2016),
@@ -57,9 +40,6 @@ ui <- fluidPage(theme = shinytheme("flatly"),
     plotlyOutput("linePlot", width = 800),
     plotlyOutput("barPlot", width = 800)
   
-    # tabsetPanel(
-    #   tabPanel("Compare over time", plotlyOutput("linePlot", width = 800)),
-    #   tabPanel("Compare across food groups", plotlyOutput("barPlot"))
     )
     
   

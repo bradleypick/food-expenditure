@@ -81,21 +81,6 @@ other <- c("Non-alcoholic beverages and beverage mixes",
 subgroups <- list(food_groups, bakery, cereal, fruit, vegetables, dairy, meat, seafood, other)
 names(subgroups) <- c("All food expenditures", food_groups)
 
-geographies <- c("British Columbia",
-                 "Prairie Region",
-                 "Ontario",
-                 "Quebec",
-                 "Atlantic Region")
-
-atlantic_region <- c("Newfoundland and Labrador",
-                     "Prince Edward Island",
-                     "Nova Scotia",
-                     "New Brunswick")
-
-prairie_region <- c("Manitoba", 
-                    "Saskatchewan", 
-                    "Alberta")
-
 provinces <- c("British Columbia",
                "Alberta",
                "Saskatchewan",
@@ -107,12 +92,6 @@ provinces <- c("British Columbia",
                "Nova Scotia",
                "Newfoundland and Labrador")
 
-store_rest <- c("Food purchased from stores", 
-                "Food purchased from restaurants")
-
-times <- c("Restaurant dinners", 
-           "Restaurant lunches", 
-           "Restaurant breakfasts")
 
 
 ## colourblind friendly palette from:
