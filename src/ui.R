@@ -3,7 +3,7 @@
 # Bradley Pick January 17, 2018
 #
 
-ui <- fluidPage(
+ui <- fluidPage(theme = shinytheme("flatly"),
   
   ## title
   titlePanel("Canadian Food Expenditure Data Explorer"),
@@ -12,14 +12,14 @@ ui <- fluidPage(
   sidebarPanel(
     
     selectInput("food", "Food Categories",
-                choices = c("Food expenditures", food_groups),
-                selected = "Food expenditures",
+                choices = c("All food expenditures", food_groups),
+                selected = "All food expenditures",
                 selectize=FALSE,
-                size=10),
+                size=9),
     
-    checkboxInput("subGroups", 
-                  label=c("Show Location Options"),
-                  value=FALSE),
+    # checkboxInput("subGroups", 
+    #               label=c("Show Location Options"),
+    #               value=FALSE),
 
     
     
@@ -27,19 +27,20 @@ ui <- fluidPage(
     
     
 
-    conditionalPanel(
-      condition = "input.subGroups",
+    # conditionalPanel(
+    #   condition = "input.subGroups",
       ## location input
       checkboxGroupInput("geoInput", "Location",
                          choices = c("Canada", provinces),
-                         selected = c("Canada", provinces))
-                     ),
+                         selected = c("Canada", "British Columbia", 
+                                      "Ontario", "Nova Scotia")),
+    #                 ),
     
     ## food group input
-    radioButtons("foodgroupID", "Food purchased from:", 
-                       choices = list("Stores" = store_rest[1],
-                                      "Restaurants" = store_rest[2]),
-                       selected = store_rest[1]),
+    # radioButtons("foodgroupID", "Food purchased from:", 
+    #                    choices = list("Stores" = store_rest[1],
+    #                                   "Restaurants" = store_rest[2]),
+    #                    selected = store_rest[1]),
     
     ## year input
     selectInput("bar_year", label = "Year of Subgroup Breakdown", 

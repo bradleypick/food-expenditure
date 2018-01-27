@@ -53,33 +53,36 @@ server <- function(input, output) {
   
   bar_data <- reactive({
     
-    if (group() == "Food purchased from restaurants") {
-      summary_filter <- times
-      bar_data <- data %>% 
-        filter(SUMMARY %in% summary_filter) %>% 
-        filter(GEO %in% geo()) %>% 
-        mutate(SUMMARY = fct_recode(SUMMARY,
-                                    Breakfast = "Restaurant breakfasts",
-                                    Lunch = "Restaurant lunches",
-                                    Dinner = "Restaurant dinners")) %>% 
-        mutate(SUMMARY = fct_relevel(SUMMARY, c("Breakfast", "Lunch", "Dinner")))
-    } else {
-      summary_filter <- food_groups
-      bar_data <- data %>% 
-        filter(SUMMARY %in% summary_filter) %>% 
-        filter(GEO %in% geo()) %>% 
-        mutate(SUMMARY = fct_recode(SUMMARY,
-                                    Bakery = "Bakery products",
-                                    Grains = "Cereal grains and cereal products",
-                                    Fruit = "Fruit, fruit preparations and nuts",
-                                    Vegetables = "Vegetables and vegetable preparations",
-                                    Dairy ="Dairy products and eggs",
-                                    Meat = "Meat",
-                                    Seafood = "Fish and seafood",
-                                    Other = "Non-alcoholic beverages and other food products")) 
-    }
+    # if (group() == "Food purchased from restaurants") {
+    #   summary_filter <- times
+    #   bar_data <- data %>% 
+    #     filter(SUMMARY %in% summary_filter) %>% 
+    #     filter(GEO %in% geo()) %>% 
+    #     mutate(SUMMARY = fct_recode(SUMMARY,
+    #                                 Breakfast = "Restaurant breakfasts",
+    #                                 Lunch = "Restaurant lunches",
+    #                                 Dinner = "Restaurant dinners")) %>% 
+    #     mutate(SUMMARY = fct_relevel(SUMMARY, c("Breakfast", "Lunch", "Dinner")))
+    # } else {
+    #   summary_filter <- food_groups
+    #   bar_data <- data %>% 
+    #     filter(SUMMARY %in% summary_filter) %>% 
+    #     filter(GEO %in% geo()) %>% 
+    #     mutate(SUMMARY = fct_recode(SUMMARY,
+    #                                 Bakery = "Bakery products",
+    #                                 Grains = "Cereal grains and cereal products",
+    #                                 Fruit = "Fruit, fruit preparations and nuts",
+    #                                 Vegetables = "Vegetables and vegetable preparations",
+    #                                 Dairy ="Dairy products and eggs",
+    #                                 Meat = "Meat",
+    #                                 Seafood = "Fish and seafood",
+    #                                 Other = "Non-alcoholic beverages and other food products")) 
+    # }
     
-    
+    bar_data <- data %>% 
+      filter(SUMMARY %in% subgroups[[food()]]) %>% 
+      filter(GEO %in% geo()) %>% 
+      mutate(SUMMARY = fct_reorder(SUMMARY, Value))
     
     return(bar_data)
     
@@ -91,7 +94,7 @@ server <- function(input, output) {
   
   output$linePlot <- renderPlotly({
     
-    if (food() == "Food expenditures") {
+    if (food() == "All food expenditures") {
       fg <- ""
     } else {
       fg <- paste0(" on ", food())
@@ -130,8 +133,8 @@ server <- function(input, output) {
       scale_x_discrete("Group") +
       scale_y_continuous("Dollars", labels = dollar_format()) +
       ggtitle(paste0("Subgroup Expenditure Breakdown for ", year)) + 
-      theme_bw() #+
-      #theme(axis.text.x = element_text(angle = -15, hjust = 1, size=10))
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = -10, hjust = 1, size=10))
     
     ggplotly(b, tooltip = "text")
     #b
