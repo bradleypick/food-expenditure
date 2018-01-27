@@ -9,7 +9,7 @@ The deployed app can be located [here](https://bradleypick.shinyapps.io/Canadian
 The dataset being visualized in the app is a Statistics Canada Survey of Household Spending on Food Expenditure
 from [here](http://www5.statcan.gc.ca/cansim/a26?lang=eng&retrLang=eng&id=2030028&&pattern=&stByVal=1&p1=1&p2=31&tabMode=dataTable&csid=).
 
-### Runnning it locally
+### Running it locally
 
 If you wish to run the app locally, you can:
 
@@ -35,9 +35,15 @@ The packages explicitly called inside the app are
 
 
 -`plotly` v 4.7.1  
+
 -`scales` v 0.5.0  
+
 -`forcats` v 0.2.0
+
 -`ggplot2` v 2.2.1
+
 -`dplyr` v 0.7.4   
+
 -`readr` v 1.1.1  
+
 -`shiny` v 1.0.5
